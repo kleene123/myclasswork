@@ -1,0 +1,37 @@
+# 量化配置文件
+quantization:
+  method: "ptq"  # ptq (训练后量化), qat (量化感知训练)
+  dtype: "int8"  # int8, fp16
+  
+  # 训练后量化 (PTQ) 配置
+  ptq:
+    calibration_samples: 1000
+    per_channel: true
+    reduce_range: false
+    quant_min: -128
+    quant_max: 127
+    
+  # 量化感知训练 (QAT) 配置
+  qat:
+    num_calibration_batches: 32
+    learning_rate: 1e-5
+    epochs: 3
+    freeze_bn_stats: false
+    
+  # 混合精度配置
+  mixed_precision:
+    enabled: false
+    sensitive_layers: []  # 指定敏感层保持高精度
+    default_dtype: "int8"
+    sensitive_dtype: "fp16"
+    
+  # 量化选项
+  options:
+    quantize_embeddings: false  # 是否量化嵌入层
+    quantize_attention: true    # 是否量化注意力层
+    quantize_ffn: true          # 是否量化前馈网络
+    
+  # 评估配置
+  evaluation:
+    compare_fp32: true
+    metrics: ["accuracy", "f1", "model_size", "inference_time"]
