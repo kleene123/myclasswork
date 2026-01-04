@@ -1,0 +1,38 @@
+# 剪枝配置文件
+pruning:
+  method: "structured"  # structured, unstructured, progressive
+  sparsity: 0.5
+  
+  # 结构化剪枝配置
+  attention_head_pruning:
+    enabled: true
+    num_heads_to_prune: 4
+    pruning_method: "importance"  # importance, random
+    
+  ffn_pruning:
+    enabled: true
+    intermediate_sparsity: 0.3
+    pruning_method: "magnitude"
+  
+  # 非结构化剪枝配置
+  unstructured:
+    method: "magnitude"  # magnitude, l1, l2
+    sparsity_levels: [0.1, 0.3, 0.5, 0.7, 0.9]
+    global_pruning: true
+  
+  # 渐进式剪枝配置
+  progressive:
+    initial_sparsity: 0.0
+    final_sparsity: 0.5
+    num_iterations: 5
+    pruning_frequency: 100  # 每多少步进行一次剪枝
+    
+  # 微调配置
+  fine_tuning:
+    enabled: true
+    epochs: 2
+    learning_rate: 1e-5
+    
+  # 剪枝后评估
+  evaluation:
+    metrics: ["accuracy", "f1", "model_size", "inference_time"]
