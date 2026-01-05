@@ -280,8 +280,10 @@ def plot_accuracy_vs_size(
 def plot_training_curves(
     train_losses: List[float],
     val_losses: Optional[List[float]] = None,
+    train_accuracies: Optional[List[float]] = None,
+    val_accuracies: Optional[List[float]] = None,
     save_path: Optional[str] = None,
-    figsize: tuple = (10, 6),
+    figsize: tuple = (12, 5),
     title: str = "训练曲线"
 ):
     """
@@ -290,24 +292,57 @@ def plot_training_curves(
     Args:
         train_losses: 训练损失列表
         val_losses: 验证损失列表
+        train_accuracies: 训练准确率列表
+        val_accuracies: 验证准确率列表
         save_path: 保存路径
         figsize: 图片大小
         title: 图表标题
     """
-    plt.figure(figsize=figsize)
-    
-    epochs = range(1, len(train_losses) + 1)
-    
-    plt.plot(epochs, train_losses, 'o-', label='训练损失', linewidth=2, markersize=6)
-    if val_losses:
-        plt.plot(epochs, val_losses, 's-', label='验证损失', linewidth=2, markersize=6)
-    
-    plt.xlabel('Epoch', fontsize=12)
-    plt.ylabel('损失', fontsize=12)
-    plt.title(title, fontsize=14, fontweight='bold')
-    plt.legend(fontsize=11)
-    plt.grid(alpha=0.3, linestyle='--')
-    plt.tight_layout()
+    # 如果提供了准确率，绘制双子图
+    if train_accuracies is not None or val_accuracies is not None:
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize)
+        
+        epochs = range(1, len(train_losses) + 1)
+        
+        # 损失曲线
+        ax1.plot(epochs, train_losses, 'o-', label='训练损失', linewidth=2, markersize=6)
+        if val_losses:
+            ax1.plot(epochs, val_losses, 's-', label='验证损失', linewidth=2, markersize=6)
+        ax1.set_xlabel('Epoch', fontsize=12)
+        ax1.set_ylabel('损失', fontsize=12)
+        ax1.set_title('损失曲线', fontsize=13, fontweight='bold')
+        ax1.legend(fontsize=10)
+        ax1.grid(alpha=0.3, linestyle='--')
+        
+        # 准确率曲线
+        if train_accuracies:
+            ax2.plot(epochs, train_accuracies, 'o-', label='训练准确率', linewidth=2, markersize=6)
+        if val_accuracies:
+            ax2.plot(epochs, val_accuracies, 's-', label='验证准确率', linewidth=2, markersize=6)
+        ax2.set_xlabel('Epoch', fontsize=12)
+        ax2.set_ylabel('准确率', fontsize=12)
+        ax2.set_title('准确率曲线', fontsize=13, fontweight='bold')
+        ax2.legend(fontsize=10)
+        ax2.grid(alpha=0.3, linestyle='--')
+        
+        plt.suptitle(title, fontsize=14, fontweight='bold', y=1.02)
+        plt.tight_layout()
+    else:
+        # 只绘制损失曲线
+        plt.figure(figsize=figsize)
+        
+        epochs = range(1, len(train_losses) + 1)
+        
+        plt.plot(epochs, train_losses, 'o-', label='训练损失', linewidth=2, markersize=6)
+        if val_losses:
+            plt.plot(epochs, val_losses, 's-', label='验证损失', linewidth=2, markersize=6)
+        
+        plt.xlabel('Epoch', fontsize=12)
+        plt.ylabel('损失', fontsize=12)
+        plt.title(title, fontsize=14, fontweight='bold')
+        plt.legend(fontsize=11)
+        plt.grid(alpha=0.3, linestyle='--')
+        plt.tight_layout()
     
     if save_path:
         Path(save_path).parent.mkdir(parents=True, exist_ok=True)
