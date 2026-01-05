@@ -370,10 +370,10 @@ def run_baseline_training(
     logger.info("="*80)
     
     # 加载最佳模型
-    best_model = BERTModel.load(str(output_path / "model"), num_labels=2)
-    best_model.to(device)
-    best_model.eval()
-    model = best_model.get_model()
+    best_bert_model = BERTModel.load(str(output_path / "model"), num_labels=2)
+    best_bert_model.to(device)
+    best_bert_model.eval()
+    model = best_bert_model.get_model()
     
     # 评估准确率
     test_metrics = evaluate_accuracy(model, test_loader, device, desc="测试集评估")

@@ -299,7 +299,8 @@ def plot_training_curves(
         title: 图表标题
     """
     # 如果提供了准确率，绘制双子图
-    if train_accuracies is not None or val_accuracies is not None:
+    has_accuracies = (train_accuracies and len(train_accuracies) > 0) or (val_accuracies and len(val_accuracies) > 0)
+    if has_accuracies:
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize)
         
         epochs = range(1, len(train_losses) + 1)

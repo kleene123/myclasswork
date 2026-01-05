@@ -314,8 +314,10 @@ def run_qat_experiment(
     logger.info("准备 QAT 模型...")
     logger.info("="*80)
     
+    # 先将模型移到设备，再准备 QAT
+    # 注意：QAT 准备必须在模型移到目标设备之后进行
     qat_model = prepare_qat_model(model, backend='fbgemm')
-    qat_model.to(device)
+    qat_model = qat_model.to(device)
     
     # 设置优化器和调度器
     optimizer = AdamW(qat_model.parameters(), lr=learning_rate)

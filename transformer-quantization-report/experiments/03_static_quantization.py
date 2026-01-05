@@ -205,9 +205,15 @@ def run_static_quantization_experiment(
         logger.info("✓ 静态量化完成")
     except Exception as e:
         logger.error(f"静态量化失败: {e}")
-        logger.info("尝试使用简化的量化流程...")
+        logger.error("静态量化必须使用真实的校准数据才能正常工作")
+        logger.error("请确保:")
+        logger.error("  1. 模型支持静态量化")
+        logger.error("  2. 校准数据加载正确")
+        logger.error("  3. 在 CPU 上运行（静态量化不支持 CUDA）")
+        logger.info("\n注意: 由于静态量化失败，使用动态量化作为备选方案")
+        logger.info("这将改变实验性质，结果可能与预期不同\n")
         
-        # 简化的量化流程
+        # 备选方案：使用动态量化
         import torch.quantization as quant
         
         quantized_model = torch.quantization.quantize_dynamic(
@@ -215,7 +221,7 @@ def run_static_quantization_experiment(
             {nn.Linear},
             dtype=torch.qint8
         )
-        logger.info("✓ 使用动态量化作为备选方案")
+        logger.warning("⚠️ 当前使用动态量化替代静态量化")
     
     # 评估量化模型
     logger.info("\n" + "="*80)
