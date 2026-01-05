@@ -1,0 +1,21 @@
+models:
+  bert_base:
+    name: "bert-base-uncased"
+    type: "sequence_classification"
+    num_labels: 2
+    max_length: 128
+    hidden_dropout_prob: 0.1
+    attention_probs_dropout_prob: 0.1
+    
+  distilbert:
+    name: "distilbert-base-uncased"
+    type: "sequence_classification"
+    num_labels: 2
+    max_length: 128
+    
+  gpt2:
+    name: "gpt2"
+    type: "causal_lm"
+    max_length: 128
+    
+default_model: "bert_base"

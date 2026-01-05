@@ -1,0 +1,56 @@
+quantization:
+  dynamic:
+    dtype: "qint8"
+    modules:
+      - Linear
+      - LSTM
+    reduce_range: false
+    
+  static:
+    dtype: "qint8"
+    backend: "fbgemm"  # CPU backend
+    # backend: "qnnpack"  # ARM backend
+    
+    observer:
+      activation: "MinMaxObserver"
+      weight: "MinMaxObserver"
+      
+    calibration:
+      num_samples: 1000
+      batch_size: 32
+      
+    module_fusion:
+      - ["Conv", "BatchNorm", "ReLU"]
+      - ["Linear", "ReLU"]
+      
+  qat:
+    dtype: "qint8"
+    backend: "fbgemm"
+    
+    fake_quantize:
+      activation_bits: 8
+      weight_bits: 8
+      
+    observer:
+      activation: "MovingAverageMinMaxObserver"
+      weight: "MovingAveragePerChannelMinMaxObserver"
+      
+    training:
+      num_epochs: 3
+      learning_rate: 1e-5
+      freeze_bn_epochs: 1
+      
+  mixed_precision:
+    fp16:
+      enabled: true
+      opt_level: "O1"  # Automatic Mixed Precision level
+      
+    int8:
+      enabled: true
+      dtype: "qint8"
+      
+    strategy:
+      # 不同层使用不同精度
+      attention_layers: "fp16"
+      ffn_layers: "int8"
+      output_layers: "fp16"

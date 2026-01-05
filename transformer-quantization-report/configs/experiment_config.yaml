@@ -1,0 +1,67 @@
+experiments:
+  baseline:
+    enabled: true
+    model: "bert-base-uncased"
+    dataset: "imdb"
+    max_length: 128
+    num_epochs: 3
+    batch_size: 16
+    learning_rate: 2e-5
+    
+  dynamic_quantization:
+    enabled: true
+    dtype: "qint8"
+    modules_to_quantize:
+      - Linear
+      - LSTM
+    
+  static_quantization:
+    enabled: true
+    dtype: "qint8"
+    calibration_samples: 1000
+    calibration_batch_size: 32
+    backend: "fbgemm"  # or "qnnpack" for ARM
+    
+  qat:
+    enabled: true
+    epochs: 3
+    learning_rate: 1e-5
+    batch_size: 16
+    backend: "fbgemm"
+    
+  mixed_precision:
+    enabled: true
+    dtypes: 
+      - "int8"
+      - "fp16"
+    
+evaluation:
+  metrics:
+    - accuracy
+    - f1_score
+    - model_size
+    - inference_time
+    - memory_usage
+    - throughput
+    
+  test_samples: 1000
+  batch_size: 32
+  num_warmup: 10
+  num_iterations: 100
+  
+visualization:
+  save_format: "png"
+  dpi: 300
+  style: "seaborn-v0_8-darkgrid"
+  figsize: [10, 6]
+  font_family: "SimHei"  # 支持中文
+  
+output:
+  save_models: true
+  save_results: true
+  save_figures: true
+  results_dir: "results"
+  figures_dir: "report/figures/results"
+  
+random_seed: 42
+device: "cpu"  # or "cuda" if available
